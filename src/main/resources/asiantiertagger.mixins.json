@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.asiantiertagger.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "PlayerEntityRendererMixin",
+    "PlayerListHudMixin",
+    "ChatHudMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "asiantiertagger",
+  "version": "${version}",
+  "name": "AsianTierTagger",
+  "description": "Displays custom PvP tiers above player names, in tab list, and in chat — powered by a custom API.",
+  "authors": [
+    "YourName"
+  ],
+  "contact": {
+    "homepage": "https://github.com/yourname/AsianTierTagger",
+    "sources": "https://github.com/yourname/AsianTierTagger"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.asiantiertagger.AsianTierTaggerClient"
+    ]
+  },
+  "mixins": [
+    "asiantiertagger.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "fabric-api": "*",
+    "minecraft": "~1.21",
+    "java": ">=21"
+  }
+}
