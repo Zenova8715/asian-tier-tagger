@@ -66,6 +66,6 @@ public abstract class PlayerEntityRendererMixin
 
         // Cancel the original call and re-invoke with our prefixed text
         ci.cancel();
-        super.renderLabelIfPresent(player, prefixedName, matrices, vertexConsumers, light);
+        super.renderLabelIfPresent(player, prefixedName, matrices, vertexConsumers, light, tickDelta);
     }
 }
