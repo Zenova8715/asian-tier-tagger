@@ -16,11 +16,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Download Gradle 8.4
+      - name: Download and install Gradle 8.8
         run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.4-bin.zip -O gradle.zip
+          wget -q https://services.gradle.org/distributions/gradle-8.8-bin.zip -O gradle.zip
           unzip -q gradle.zip
-          echo "$(pwd)/gradle-8.4/bin" >> $GITHUB_PATH
+          echo "$(pwd)/gradle-8.8/bin" >> $GITHUB_PATH
 
       - name: Build
         run: gradle build --no-daemon --no-configuration-cache
