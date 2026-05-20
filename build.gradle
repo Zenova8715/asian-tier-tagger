@@ -11,23 +11,7 @@ base {
 }
 
 repositories {
-    maven { url = 'https://maven.shedaniel.me/' }
-    maven { url = 'https://maven.terraformersmc.com/releases/' }
-}
-
-loom {
-    splitEnvironmentSourceSets()
-
-    mods {
-        "asiantiertagger" {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.client
-        }
-    }
-}
-
-fabricApi {
-    configureDataGeneration()
+    mavenCentral()
 }
 
 dependencies {
@@ -35,40 +19,27 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-    // Gson for JSON parsing (bundled with Minecraft)
-    // No extra dependencies needed
 }
 
 processResources {
     inputs.property "version", project.version
-
     filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 17
+    it.options.release = 21
 }
 
 java {
     withSourcesJar()
-
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
     from("LICENSE") {
         rename { "${it}_${project.base.archivesName.get()}" }
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
     }
 }
