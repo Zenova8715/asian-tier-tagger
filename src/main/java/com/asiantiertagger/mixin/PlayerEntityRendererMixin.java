@@ -46,6 +46,7 @@ public abstract class PlayerEntityRendererMixin
                                MatrixStack matrices,
                                VertexConsumerProvider vertexConsumers,
                                int light,
+                               float tickDelta,
                                CallbackInfo ci) {
 
         ModConfig cfg = ModConfig.get();
