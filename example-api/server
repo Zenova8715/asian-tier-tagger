@@ -1,0 +1,88 @@
+/**
+ * AsianTierTagger — Example API Server (Node.js / Express)
+ *
+ * Run:
+ *   npm install express
+ *   node server.js
+ *
+ * Then set apiUrl in the mod config to: http://localhost:3000
+ * The mod will call: GET http://localhost:3000/player/<username>
+ */
+
+const express = require('express');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// ── Tier data store (replace with a real database) ─────────────────────────
+//
+// In production you'd query PostgreSQL / MongoDB / etc.
+// This is a simple in-memory map for demonstration.
+const tierDatabase = {
+    // username (lowercase) → tier info
+    'voidfury':    { tier: 'HT2', gamemode: 'NethPot',  color: '#AA0000', prefix: '[HT2]'  },
+    'stormhawk':   { tier: 'HT1', gamemode: 'NethPot',  color: '#AA00AA', prefix: '[HT1]'  },
+    'blazerunner': { tier: 'HT3', gamemode: 'Sword',    color: '#FF5555', prefix: '[HT3]'  },
+    'cryptowulf':  { tier: 'HT4', gamemode: 'Crystal',  color: '#FFAA00', prefix: '[HT4]'  },
+    'neonviper':   { tier: 'HT5', gamemode: 'Axe',      color: '#FFFF55', prefix: '[HT5]'  },
+    'arcticfox':   { tier: 'LT1', gamemode: 'NethPot',  color: '#5555FF', prefix: '[LT1]'  },
+    'shadowbyte':  { tier: 'LT2', gamemode: 'Sword',    color: '#55FFFF', prefix: '[LT2]'  },
+    'duskraven':   { tier: 'LT3', gamemode: 'Crystal',  color: '#55FF55', prefix: '[LT3]'  },
+    'ironclaw':    { tier: 'LT4', gamemode: 'Axe',      color: '#555555', prefix: '[LT4]'  },
+    'greystone':   { tier: 'LT5', gamemode: 'NethPot',  color: '#AAAAAA', prefix: '[LT5]'  },
+};
+
+// ── Middleware ─────────────────────────────────────────────────────────────
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
+// ── GET /player/:username ──────────────────────────────────────────────────
+app.get('/player/:username', (req, res) => {
+    const username = req.params.username;
+
+    if (!username || !/^[A-Za-z0-9_]{1,16}$/.test(username)) {
+        return res.status(400).json({ error: 'Invalid username format' });
+    }
+
+    const data = tierDatabase[username.toLowerCase()];
+
+    if (!data) {
+        // Player not ranked — return 404 so the mod caches a "no tier" sentinel
+        return res.status(404).json({ error: 'Player not found', player: username });
+    }
+
+    return res.status(200).json({
+        player:   username,
+        tier:     data.tier,
+        gamemode: data.gamemode,
+        color:    data.color,
+        prefix:   data.prefix,
+    });
+});
+
+// ── GET /health ────────────────────────────────────────────────────────────
+app.get('/health', (_req, res) => {
+    res.json({ status: 'ok', uptime: process.uptime() });
+});
+
+// ── POST /player/:username (admin — add/update a player) ───────────────────
+// Protect this with an API key or auth middleware in production!
+app.use(express.json());
+app.post('/player/:username', (req, res) => {
+    const username = req.params.username.toLowerCase();
+    const { tier, gamemode, color, prefix } = req.body;
+
+    if (!tier || !gamemode || !color || !prefix) {
+        return res.status(400).json({ error: 'Missing required fields: tier, gamemode, color, prefix' });
+    }
+
+    tierDatabase[username] = { tier, gamemode, color, prefix };
+    return res.status(200).json({ message: `Updated tier for ${username}`, data: tierDatabase[username] });
+});
+
+// ── Start ──────────────────────────────────────────────────────────────────
+app.listen(PORT, () => {
+    console.log(`AsianTierTagger API running on http://localhost:${PORT}`);
+    console.log(`Test: curl http://localhost:${PORT}/player/VoidFury`);
+});
